@@ -3,8 +3,23 @@ import express from 'express'; // Importamos express
 import morgan from 'morgan'; // Importamos morgan (middleware para pintar las peticiones HTTP que solicitan a nustra app)
 import cors from 'cors'; // Importamos CORS (middleware que permite realizar peticiones desde servidores externos e impedir bloqueos por CORS)
 import path from 'path'; // Importamos path (middleware que ayudará en la escritura de direcciones de directorios y archivos)
+import mongoose from 'mongoose'; // Iimportamos moongose (paquete que nos ayuda a la creación de conexiones a bases de datos)
+
 
 const app = express(); // Inicializamos express dentro de la constante app
+
+/** Conexion a Base de datos */
+const uri = 'mongodb://localhost:27017/udemy'; // Caden de conexion a base de datos
+const options = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+}; // Opciones de configuracion para la conexion
+mongoose.connect(uri,options).then(
+    () => { console.log("Connected to MongoDB"); },
+    err => { err }
+) //Funcion para realizar la conexion a base de datos, con respuesta correcta y error
+
 
 /** Middlewares */
 app.use(morgan('dev')); // Configuramos morgan (debe ir antes de las rutas)
@@ -18,6 +33,7 @@ app.use(express.urlencoded({ extended: true })); // Para poder trabajar con soli
 // app.get('/', (req,res) => {
 //     res.send('Hello world'); //Respuesta que dará el servidor cuando reciba peticion a la ruta raíz
 // });
+app.use('/api', require('./routes/Nota'));
 
 /** Middleware para Vue js */
 const history = require('connect-history-api-fallback'); // Middleware para Vue.js router modo history (debe ir debajo de las rutas)
