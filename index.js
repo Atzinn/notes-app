@@ -9,7 +9,10 @@ import mongoose from 'mongoose'; // Iimportamos moongose (paquete que nos ayuda 
 const app = express(); // Inicializamos express dentro de la constante app
 
 /** Conexion a Base de datos */
-const uri = 'mongodb://localhost:27017/udemy'; // Caden de conexion a base de datos
+// const uri = 'mongodb://localhost:27017/udemy'; Cadena de conexion a base de datos (local)
+
+
+const uri = 'mongodb+srv://user_udemy:BV5cB1VbbiQokXtb@cluster0.knphn.mongodb.net/udemy?retryWrites=true&w=majority';
 const options = {
     useNewUrlParser: true,
     useCreateIndex: true,
