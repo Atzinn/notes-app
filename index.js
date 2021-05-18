@@ -3,20 +3,24 @@ import express from 'express'; // Importamos express
 import morgan from 'morgan'; // Importamos morgan (middleware para pintar las peticiones HTTP que solicitan a nustra app)
 import cors from 'cors'; // Importamos CORS (middleware que permite realizar peticiones desde servidores externos e impedir bloqueos por CORS)
 import path from 'path'; // Importamos path (middleware que ayudará en la escritura de direcciones de directorios y archivos)
-import mongoose from 'mongoose'; // Iimportamos moongose (paquete que nos ayuda a la creación de conexiones a bases de datos)
+import mongoose from 'mongoose'; // Importamos moongose (paquete que nos ayuda a la creación de conexiones a bases de datos)
 
 
 const app = express(); // Inicializamos express dentro de la constante app
 
 /** Conexion a Base de datos */
-// const uri = 'mongodb://localhost:27017/udemy'; Cadena de conexion a base de datos (local)
+let uri 
+if (process.env.NODE_ENV === "dev") {
+    uri = 'mongodb://localhost:27017/udemy'; //Cadena de conexion a base de datos (en desarrollo)
+} else {
+    uri = 'mongodb+srv://user_udemy:BV5cB1VbbiQokXtb@cluster0.knphn.mongodb.net/udemy?retryWrites=true&w=majority'; //Cadena de conexion a base de datos (en produccion)
+}
 
-
-const uri = 'mongodb+srv://user_udemy:BV5cB1VbbiQokXtb@cluster0.knphn.mongodb.net/udemy?retryWrites=true&w=majority';
 const options = {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 }; // Opciones de configuracion para la conexion
 mongoose.connect(uri,options).then(
     () => { console.log("Connected to MongoDB"); },
@@ -37,6 +41,8 @@ app.use(express.urlencoded({ extended: true })); // Para poder trabajar con soli
 //     res.send('Hello world'); //Respuesta que dará el servidor cuando reciba peticion a la ruta raíz
 // });
 app.use('/api', require('./routes/Nota'));
+app.use('/api', require('./routes/User'));
+app.use('/api/login', require('./routes/Login'));
 
 /** Middleware para Vue js */
 const history = require('connect-history-api-fallback'); // Middleware para Vue.js router modo history (debe ir debajo de las rutas)

@@ -1,11 +1,15 @@
 import express from 'express'; // Importamos el Router desde express
 import Nota from '../models/Nota'; // Importamos el modelo
+import { verifyAuth,verifyAdmin } from '../middlewares/Auth'
 
 const router = express.Router();
 
 // Creacion de la ruta tipo post para agregar
-router.post('/new-note', async (req,res) =>{
+router.post('/new-note', verifyAuth ,async (req,res) =>{
     const noteBody = req.body;
+
+    noteBody.userId = req.user._id
+
     try {
         const notaDb = await Nota.create(noteBody);
         res.status(200).json(notaDb);
@@ -17,9 +21,10 @@ router.post('/new-note', async (req,res) =>{
     }
 });
 
-router.get('/notes', async (req,res) => {
+router.get('/notes', verifyAuth, async (req,res) => {
+    const userId = req.user._id
     try {
-        const result = await Nota.find();
+        const result = await Nota.find({userId});
         res.json(result);
     } catch (error) {
         return res.status(404).json({
@@ -64,7 +69,7 @@ router.delete('/note/:id', async (req,res) => {
         });
     }
 })
-
+// Actualizar
 router.put('/note/:id', async (req,res) => {
     const _id = req.params.id;
     const body = req.body;
